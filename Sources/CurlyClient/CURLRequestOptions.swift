@@ -111,8 +111,10 @@ extension CURLRequest.Option {
 			curl.setOption(CURLOPT_CAINFO, s: optString)
 		case .sslCADirPath(let optString):
 			curl.setOption(CURLOPT_CAPATH, s: optString)
-		case .sslPinnedPublicKey(let optString):
-			curl.setOption(CURLOPT_PINNEDPUBLICKEY, s: optString)
+		//case .sslPinnedPublicKey(let optString):
+		//	curl.setOption(CURLOPT_PINNEDPUBLICKEY, s: optString)
+    case .sslPinnedPublicKey(_):
+      ()
 		case .sslCiphers(let optArray):
 			curl.setOption(CURLOPT_SSL_CIPHER_LIST, s: optArray.joined(separator: ":"))
 		case .ftpPreCommands(let optArray):
