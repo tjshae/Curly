@@ -1,0 +1,31 @@
+os:
+    - heroku-18
+language: generic
+sudo: required
+dist: trusty
+
+env:
+ global:
+  - SWIFT_VERSION=5.0
+
+osx_image: xcode10.2.1
+before_install:
+    - if [ $TRAVIS_OS_NAME == "osx" ]; then
+            brew update;
+            brew tap vapor/tap;
+            brew update;
+            brew install vapor;
+        else
+            eval "$(curl -sL https://swiftenv.fuller.li/install.sh)";
+            eval "$(sudo apt-get install libcurl4-openssl-dev)";
+        fi
+
+script:
+    - swift build
+    - swift build -c release
+    - swift test
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
