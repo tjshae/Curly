@@ -31,22 +31,7 @@ class CURLResponse {
 	typealias Header = HTTPResponseHeader
 	/// A confirmation func thats used to obtain an asynchrnous response.
 	typealias Confirmation = () throws -> CURLResponse
-	/// An error thrown while retrieving a response.
-	struct Error: Swift.Error {
-		/// The curl specific request response code.
-		let code: Int
-		/// The string message for the curl response code.
-		let description: String
-		/// The response object for this error.
-		let response: CURLResponse
 		
-		init(_ response: CURLResponse, code: CURLcode) {
-			self.code = Int(code.rawValue)
-			self.description = response.curl.strError(code: code)
-			self.response = response
-		}
-	}
-	
 	/// Enum wrapping the typed response info keys.
 	enum Info {
 		/// Info keys with String values.
@@ -183,7 +168,7 @@ extension CURLResponse {
 		let resultCode = curl_easy_perform(curl.curl)
 		postFields = nil
 		guard CURLE_OK == resultCode else {
-			throw Error(self, code: resultCode)
+            throw CurlyError(self, code: resultCode)
 		}
 	}
 	
@@ -196,7 +181,7 @@ extension CURLResponse {
 		let (notDone, resultCode, _, _) = curl.perform()
 		guard Int(CURLE_OK.rawValue) == resultCode else {
 			postFields = nil
-			return callback({ throw Error(self, code: CURLcode(rawValue: UInt32(resultCode))) })
+            return callback({ throw CurlyError(self, code: CURLcode(rawValue: UInt32(resultCode))) })
 		}
 		if notDone {
 			curl.ioWait {
